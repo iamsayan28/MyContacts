@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/MyContactsApp.Core/MyContactsApp.Core.csproj" Id="48e490f7-1313-49bf-bfd3-de8afab5b4cc" />
+  <Project Path="src/MyContactsApp.Infrastructure/MyContactsApp.Infrastructure.csproj" Id="8337565e-8065-4b7a-a56c-5221316114fe" />
+  <Project Path="src/MyContactsApp.Web/MyContactsApp.Web.csproj" Id="8932a038-d205-46f6-83ca-f28a31807cad" />
+</Solution>
