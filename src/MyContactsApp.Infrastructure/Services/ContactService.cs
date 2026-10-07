@@ -6,7 +6,7 @@ public interface IContactService
 {
     public void AddContactService(Contact contact);
 }
-public class ContactService
+public class ContactService : IContactService
 {
     public void AddContactService(Contact contact)
     {

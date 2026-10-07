@@ -1,5 +1,27 @@
-﻿<h3>DisplayContact</h3>
+﻿@page "/uc1"
+
+<h3>UC1: Create & Display Contact</h3>
+<div class="card">
+	@sampleContact.ToString();
+</div>
 
 @code {
+	// present within this component, 
+	private Contact? sampleContact;
 
+	protected override void OnInitialized()
+	{
+		sampleContact = new Contact
+		{
+			Id = 1,
+			FirstName = "John",
+			LastName = "Doe",
+			Address = "12 MG Road",
+			City = "Pune",
+			State = "Maharashtra",
+			Zip = "411001",
+			PhoneNumber = "9876543210",
+			Email = "john.doe@mail.com"
+		};
+	}
 }

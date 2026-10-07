@@ -1,25 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
-using MyContactsApp.Web.Models;
 using System.Diagnostics;
 
-namespace MyContactsApp.Web.Controllers
+public class ContactsController : Controller
 {
-    public class HomeController : Controller
+    public static List<Contact> ContactList = new List<Contact>();
+    
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View(ContactList);
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [HttpPost]
+    public IActionResult Create(Contact contact)
+    {
+        if (!ModelState.IsValid) return View(contact);
+        _list.Add(contact);
+        //ViewData["list"] = _list; //doesnt survive redirect
+        return RedirectToAction("Index");
     }
 }
