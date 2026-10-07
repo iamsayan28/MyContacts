@@ -18,7 +18,7 @@ public class Contact
     [RegularExpression("^[0 - 9]{10}$")]
     public string PhoneNumber { get; set; } = string.Empty;
     [EmailAddress]
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     public override string ToString()
     {
