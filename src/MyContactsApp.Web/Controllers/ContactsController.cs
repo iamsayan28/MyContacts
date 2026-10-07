@@ -20,7 +20,7 @@ public class ContactsController : Controller
     public IActionResult Create(Contact contact)
     {
         if (!ModelState.IsValid) return View(contact);
-        _list.Add(contact);
+        ContactList.Add(contact);
         //ViewData["list"] = _list; //doesnt survive redirect
         return RedirectToAction("Index");
     }

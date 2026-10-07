@@ -1,6 +1,4 @@
-﻿@using System.Net.Http
-@using System.Net.Http.Json
-@inject HttpClient Http
+﻿@inject NavigationManager NavigationManager
 
 @using Microsoft.AspNetCore.Components.Forms
 @* @using MyContactsApp.Core.Models *@
@@ -73,7 +71,10 @@
 
 	private async Task HandleValidSubmit()
 	{
-		var response = await Http.PostAsJsonAsync("/Controller/Create", contactModel);
+
+		ContactsController.ContactList.Add(contactModel);
+        NavigationManager.NavigateTo("/Contacts", forceLoad: true);
+
         isSubmitted = true;
         submittedOutput = contactModel.ToString();
     }

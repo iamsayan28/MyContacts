@@ -1,4 +1,7 @@
+//using MyContactsApp.Web.Components;
+
 using Microsoft.EntityFrameworkCore;
+using MyContactsApp.Web.Components;
 //using MyContactsApp.Infrastructure.Data; // Adjust if your AppDbContext namespace differs
 //using MyContactsApp.Infrastructure.Services; // Adjust to your actual service namespace
 //using MyContactsApp.Core.Interfaces; // Adjust to your actual interface namespace
@@ -18,6 +21,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+//builder.Services.AddRazorComponents()
+//    .AddInteractiveServerComponents();
+
 
 builder.Services.AddHttpClient();
 
@@ -53,5 +60,8 @@ app.MapControllers();
 
 // Fallback to Home/Index for single-page routing
 app.MapFallbackToController("Index", "Contacts");
+
+//app.MapRazorComponents<CreateContact>()
+//    .AddInteractiveServerRenderMode();
 
 app.Run();
