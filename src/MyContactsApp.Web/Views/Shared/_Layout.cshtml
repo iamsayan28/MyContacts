@@ -1,14 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
     <title>@ViewData["Title"] - MyContactsApp.Web</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MyContactsApp.Web.styles.css" asp-append-version="true" />
 </head>
+
 <body>
     <header>
     </header>
@@ -20,12 +22,15 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - MyContactsApp.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            footer
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @*show errors on the fields in create page/ also since this is a mvc not a blazor web app which is why this line needed*@
+    <script src="~/_framework/blazor.server.js"></script>
 </body>
 </html>

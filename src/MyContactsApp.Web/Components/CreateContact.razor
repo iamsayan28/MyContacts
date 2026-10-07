@@ -1,0 +1,82 @@
+﻿@inject NavigationManager NavigationManager
+
+@using Microsoft.AspNetCore.Components.Forms
+@* @using MyContactsApp.Core.Models *@
+
+<EditForm Model = "@contactModel" OnValidSubmit ="@HandleValidSubmit">
+	<DataAnnotationsValidator/>
+
+	<div>
+		<div>
+			<label class="form-label">First Name</label>
+			<InputText class="form-control" @bind-Value="contactModel.FirstName" />
+			<ValidationMessage For="@(() => contactModel.FirstName)" class="text-danger small" />
+		</div>
+
+		<div>
+			<label class="form-label">Last Name</label>
+			<InputText class="form-control" @bind-Value="contactModel.LastName" />
+			<ValidationMessage For="@(() => contactModel.LastName)" class="text-danger small" />
+		</div>
+
+        <div class="col-12">
+            <label class="form-label">Address</label>
+            <InputText class="form-control" @bind-Value="contactModel.Address" />
+            <ValidationMessage For="@(() => contactModel.Address)" class="text-danger small" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">City</label>
+            <InputText class="form-control" @bind-Value="contactModel.City" />
+            <ValidationMessage For="@(() => contactModel.City)" class="text-danger small" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">State</label>
+            <InputText class="form-control" @bind-Value="contactModel.State" />
+            <ValidationMessage For="@(() => contactModel.State)" class="text-danger small" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Zip Code</label>
+            <InputText class="form-control" @bind-Value="contactModel.Zip" />
+            <ValidationMessage For="@(() => contactModel.Zip)" class="text-danger small" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Phone Number</label>
+            <InputText class="form-control" @bind-Value="contactModel.PhoneNumber" />
+            <ValidationMessage For="@(() => contactModel.PhoneNumber)" class="text-danger small" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="contactModel.Email" />
+            <ValidationMessage For="@(() => contactModel.Email)" class="text-danger small" />
+        </div>
+
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-primary">Validate & Submit</button>
+        </div>
+	</div>
+
+</EditForm>
+
+
+@code
+{
+	private Contact contactModel = new Contact();
+	private bool isSubmitted = false;
+	private string submittedOutput = string.Empty;
+
+	private async Task HandleValidSubmit()
+	{
+
+		ContactsController.ContactList.Add(contactModel);
+        NavigationManager.NavigateTo("/Contacts", forceLoad: true);
+
+        isSubmitted = true;
+        submittedOutput = contactModel.ToString();
+    }
+
+}

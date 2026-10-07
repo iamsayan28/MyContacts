@@ -1,4 +1,10 @@
+//using MyContactsApp.Web.Components;
+
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
+=======
+using MyContactsApp.Web.Components;
+>>>>>>> feature/UC2-validate-contact
 //using MyContactsApp.Infrastructure.Data; // Adjust if your AppDbContext namespace differs
 //using MyContactsApp.Infrastructure.Services; // Adjust to your actual service namespace
 //using MyContactsApp.Core.Interfaces; // Adjust to your actual interface namespace
@@ -18,6 +24,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+<<<<<<< HEAD
+=======
+
+//builder.Services.AddRazorComponents()
+//    .AddInteractiveServerComponents();
+
+
+builder.Services.AddHttpClient();
+>>>>>>> feature/UC2-validate-contact
 
 var app = builder.Build();
 
@@ -44,12 +59,19 @@ app.MapBlazorHub();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Contacts}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.MapControllers();
 
 // Fallback to Home/Index for single-page routing
+<<<<<<< HEAD
 app.MapFallbackToController("Index", "Home");
+=======
+app.MapFallbackToController("Index", "Contacts");
+
+//app.MapRazorComponents<CreateContact>()
+//    .AddInteractiveServerRenderMode();
+>>>>>>> feature/UC2-validate-contact
 
 app.Run();
