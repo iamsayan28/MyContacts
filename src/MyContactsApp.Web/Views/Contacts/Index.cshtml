@@ -9,23 +9,7 @@
 
 <div>
     Create a new contact:
-    <a asp-controller="Contacts" asp-action="Create" class="btn btn-primary">Create</a>
+    <a asp-controller="Contacts" asp-action="Add" class="btn btn-primary">Create</a>
 </div>
 
-<h4>Saved Contacts:</h4>
-@if (Model != null && Model.Any())
-{
-    <ul class="list-group mb-4">
-        @foreach (var c in (IEnumerable<Contact>)Model)
-        {
-            <li class="list-group-item">@c.ToString()</li>
-        }
-    </ul>
-}
-else
-{
-    <p class="text-muted">No contacts found.</p>
-}
-
-<!-- Render your Blazor component inside the MVC View -->
-@* <component type="typeof(MyContactsApp.Web.Components.DisplayContact)" render-mode="ServerPrerendered" /> *@
+<component type="typeof(MyContactsApp.Web.Components.ListContact)" render-mode="ServerPrerendered" /> 

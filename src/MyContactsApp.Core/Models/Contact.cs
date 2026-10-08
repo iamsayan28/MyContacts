@@ -34,6 +34,7 @@ public class Contact
 
     [Required(ErrorMessage = ("Email is required"))]
     [EmailAddress]
+    [StringLength(255)]
     public string Email { get; set; } = string.Empty;
 
     public override string ToString()

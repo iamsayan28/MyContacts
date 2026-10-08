@@ -3,25 +3,22 @@ using System.Diagnostics;
 
 public class ContactsController : Controller
 {
-    public static List<Contact> ContactList = new List<Contact>();
-    
-    public IActionResult Index()
+    private ContactService _service;
+    public static List<Contact> ContactList;
+    public ContactsController(ContactService service)
     {
+        _service = service;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        ContactList = await _service.GetAllContactsAsync();
         return View(ContactList);
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public IActionResult Add()
     {
         return View();
-    }
-
-    [HttpPost]
-    public IActionResult Create(Contact contact)
-    {
-        if (!ModelState.IsValid) return View(contact);
-        ContactList.Add(contact);
-        //ViewData["list"] = _list; //doesnt survive redirect
-        return RedirectToAction("Index");
     }
 }

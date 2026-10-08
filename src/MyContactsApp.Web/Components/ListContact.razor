@@ -1,0 +1,27 @@
+﻿@inject ContactService contactService
+@page "/uc1"
+
+<h3>List of Contacts:</h3>
+<div class="card">
+	<ul class="list-group list-group-flush">
+		@foreach (var contact in list)
+		{
+			<li class="list-group-item d-flex justify-content-between align-items-center">
+				<div>
+					<h6 class="mb-0">@contact.FirstName @contact.LastName</h6>
+					<small class="text-muted">@contact.Email</small>
+				</div>
+			</li>
+		}
+	</ul>
+</div>
+
+@code {
+	// present within this component
+	private List<Contact> list = new List<Contact>(); // empty list initially
+
+	protected override async Task OnInitializedAsync()
+	{
+		list = await contactService.GetAllContactsAsync();
+	}
+}
