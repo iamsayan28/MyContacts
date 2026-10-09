@@ -1,0 +1,100 @@
+﻿@page "/contacts/locations"
+@inject ContactService ContactService
+@using MyContactsApp.Core
+
+<PageTitle>Contacts by Location</PageTitle>
+
+<h1>Contacts by Location</h1>
+
+@if (isLoading)
+{
+    <p>Loading contacts...</p>
+}
+else if (totalContacts == 0)
+{
+    <p>No contacts available.</p>
+}
+else
+{
+    <h2 class="mt-4">By City</h2>
+
+    @foreach (var group in cityGroups)
+    {
+        <h3 class="h5 mt-3">@group.Location</h3>
+
+        <ul class="list-group mb-3">
+            @foreach (var contact in group.Contacts)
+            {
+                <li class="list-group-item">
+                    @contact.FirstName @contact.LastName
+                </li>
+            }
+        </ul>
+    }
+
+    <h2 class="mt-4">By State</h2>
+
+    @foreach (var group in stateGroups)
+    {
+        <h3 class="h5 mt-3">@group.Location</h3>
+
+        <ul class="list-group mb-3">
+            @foreach (var contact in group.Contacts)
+            {
+                <li class="list-group-item">
+                    @contact.FirstName @contact.LastName
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private bool isLoading = true;
+    private int totalContacts;
+
+    private List<LocationGroup> cityGroups = new();
+    private List<LocationGroup> stateGroups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var contacts = await ContactService.GetAllContactsAsync();
+
+        totalContacts = contacts.Count;
+
+        cityGroups = GroupContacts(contacts, c => c.City);
+        stateGroups = GroupContacts(contacts, c => c.State);
+
+        isLoading = false;
+    }
+
+    private static List<LocationGroup> GroupContacts(
+        List<Contact> contacts,
+        Func<Contact, string?> locationSelector)
+    {
+        return contacts
+            .GroupBy(
+                c => (locationSelector(c) ?? string.Empty).Trim(),
+                StringComparer.OrdinalIgnoreCase)
+            .OrderBy(g => string.IsNullOrWhiteSpace(g.Key) ? 1 : 0)
+            .ThenBy(g => g.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(g => new LocationGroup
+            {
+                Location = string.IsNullOrWhiteSpace(g.Key)
+                    ? "(Not specified)"
+                    : g.Key,
+
+                Contacts = g
+                    .OrderBy(c => c.FirstName)
+                    .ThenBy(c => c.LastName)
+                    .ToList()
+            })
+            .ToList();
+    }
+
+    private sealed class LocationGroup
+    {
+        public string Location { get; set; } = string.Empty;
+        public List<Contact> Contacts { get; set; } = new();
+    }
+}

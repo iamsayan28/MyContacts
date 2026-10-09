@@ -1,6 +1,6 @@
-﻿@inject ContactService contactService
+﻿@page "/uc1"
+@inject ContactService contactService
 @inject AddressBookService addressBookService
-@page "/uc1"
 
 <h3>List of Contacts</h3>
 
@@ -26,11 +26,6 @@
                 @onclick="SearchContacts">
             Search
         </button>
-
-        @* <button type="button" class="btn btn-primary" @onclick="TestClick">
-            Test Click
-        </button>
-        <p>@testMessage</p> *@
         <button type="button" class="btn btn-secondary"
                 @onclick="ClearSearch">
             Clear
@@ -51,16 +46,11 @@
                 <small>@contact.ToString()</small>
 
                 <div>
-                    <a href="/contacts/edit/@contact.Id"
-                       class="btn btn-primary btn-sm">Edit</a>
-
-                    <form action="/Contacts/Delete/@contact.Id"
-                          method="post" style="display:inline;">
-                        <button type="submit"
-                                class="btn btn-sm btn-outline-danger">
-                            Delete
-                        </button>
-                    </form>
+                    <a href="/contacts/edit/@contact.Id" class="btn btn-primary btn-sm">Edit</a>
+                    <button class="btn btn-sm btn-outline-danger ms-1"
+                            @onclick="() => DeleteContact(contact.Id)">
+                        Delete
+                    </button>
                 </div>
             </li>
         }
@@ -82,6 +72,11 @@
     private bool searched;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadContactsAsync();
+    }
+
+    private async Task LoadContactsAsync()
     {
         allContacts = await contactService.GetAllContactsAsync();
         filteredList = allContacts;
@@ -111,10 +106,9 @@
         searched = false;
     }
 
-    private string testMessage = "Not clicked";
-
-    private void TestClick()
+    private async Task DeleteContact(int id)
     {
-        testMessage = "Button event works";
+        await contactService.DeleteContactAsync(id);
+        await LoadContactsAsync();
     }
 }

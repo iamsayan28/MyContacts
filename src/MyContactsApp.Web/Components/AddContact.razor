@@ -1,10 +1,12 @@
+@page "/contacts/add"
 @inject NavigationManager NavigationManager
 @inject ContactService contactService
 @using Microsoft.AspNetCore.Components.Forms
 
+<h3>Add Contact</h3>
 
-<EditForm Model = "@contactModel" OnValidSubmit ="@HandleValidSubmit">
-	<DataAnnotationsValidator/>
+<EditForm Model="@contactModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
@@ -13,18 +15,18 @@
         </div>
     }
 
-	<div>
-		<div>
-			<label class="form-label">First Name</label>
-			<InputText class="form-control" @bind-Value="contactModel.FirstName" />
-			<ValidationMessage For="@(() => contactModel.FirstName)" class="text-danger small" />
-		</div>
+    <div>
+        <div>
+            <label class="form-label">First Name</label>
+            <InputText class="form-control" @bind-Value="contactModel.FirstName" />
+            <ValidationMessage For="@(() => contactModel.FirstName)" class="text-danger small" />
+        </div>
 
-		<div>
-			<label class="form-label">Last Name</label>
-			<InputText class="form-control" @bind-Value="contactModel.LastName" />
-			<ValidationMessage For="@(() => contactModel.LastName)" class="text-danger small" />
-		</div>
+        <div>
+            <label class="form-label">Last Name</label>
+            <InputText class="form-control" @bind-Value="contactModel.LastName" />
+            <ValidationMessage For="@(() => contactModel.LastName)" class="text-danger small" />
+        </div>
 
         <div class="col-12">
             <label class="form-label">Address</label>
@@ -64,14 +66,12 @@
 
         <div class="col-12 mt-3">
             <button type="submit" class="btn btn-primary">Validate & Submit</button>
+            <a href="/uc1" class="btn btn-secondary ms-2">Cancel</a>
         </div>
-	</div>
-
+    </div>
 </EditForm>
 
-
-@code
-{
+@code {
     private Contact contactModel = new Contact();
     private string? errorMessage;
 
@@ -83,22 +83,21 @@
         {
             bool added = await contactService.AddContactServiceAsync(contactModel);
 
-            if(!added)
+            if (!added)
             {
-                errorMessage = $"Contact '{contactModel.FirstName} " + $"{contactModel.LastName}' already exists. " + "Duplicate not added.";
+                errorMessage = $"Contact '{contactModel.FirstName} {contactModel.LastName}' already exists. Duplicate not added.";
                 return;
             }
 
-            NavigationManager.NavigateTo("/Contacts", forceLoad: true);
+            NavigationManager.NavigateTo("/uc1");
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException)
         {
             errorMessage = "A contact with this email already exists.";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             errorMessage = "An error occurred while saving the contact.";
         }
     }
-
 }

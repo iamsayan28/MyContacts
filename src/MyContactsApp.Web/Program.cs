@@ -3,7 +3,7 @@ using MyContactsApp.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add Services to the Container
+// 1. Database & Services
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -13,33 +13,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ContactService>();
 builder.Services.AddScoped<AddressBookService>();
 
-// Web & UI Services
-builder.Services.AddControllersWithViews();
+// 2. Pure Blazor Services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
-// 2. Configure the HTTP Request Pipeline (Middleware Order Matters!)
+// 3. Middleware Pipeline
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-// Routing MUST come before Antiforgery, Authorization, and Endpoints
 app.UseRouting();
 
-app.UseAntiforgery();
-app.UseAuthorization();
-
-// 3. Endpoint Mappings
-app.MapStaticAssets();
-app.MapRazorPages();
+// 4. Endpoints - All routes go to Blazor Router
 app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Contacts}/{action=Index}/{id?}")
-    .WithStaticAssets();
-app.MapControllers();
-
-app.MapFallbackToController("Index", "Contacts");
 app.Run();

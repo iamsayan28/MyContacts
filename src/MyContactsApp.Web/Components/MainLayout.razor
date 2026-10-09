@@ -1,0 +1,15 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<div class="container py-4">
+    <nav class="nav nav-pills mb-4">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/uc1">Search Contacts</a>
+        <a class="nav-link" href="/contacts/locations">Group by Location</a>
+        <a class="nav-link" href="/contacts/add">Add Contact</a>
+    </nav>
+
+    <main>
+        @Body
+    </main>
+</div>
