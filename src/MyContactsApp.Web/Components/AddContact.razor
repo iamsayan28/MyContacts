@@ -1,10 +1,17 @@
 ﻿@inject NavigationManager NavigationManager
-
+@inject ContactService contactService
 @using Microsoft.AspNetCore.Components.Forms
-@* @using MyContactsApp.Core.Models *@
+
 
 <EditForm Model = "@contactModel" OnValidSubmit ="@HandleValidSubmit">
 	<DataAnnotationsValidator/>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mb-3" role="alert">
+            @errorMessage
+        </div>
+    }
 
 	<div>
 		<div>
@@ -65,18 +72,26 @@
 
 @code
 {
-	private Contact contactModel = new Contact();
-	private bool isSubmitted = false;
-	private string submittedOutput = string.Empty;
+    private Contact contactModel = new Contact();
+    private string? errorMessage;
 
-	private async Task HandleValidSubmit()
-	{
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = null; // Clear previous error
 
-		ContactsController.ContactList.Add(contactModel);
-        NavigationManager.NavigateTo("/Contacts", forceLoad: true);
-
-        isSubmitted = true;
-        submittedOutput = contactModel.ToString();
+        try
+        {
+            await contactService.AddContactServiceAsync(contactModel);
+            NavigationManager.NavigateTo("/Contacts", forceLoad: true);
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+        {
+            errorMessage = "A contact with this email already exists.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred while saving the contact.";
+        }
     }
 
 }

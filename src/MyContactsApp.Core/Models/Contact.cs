@@ -34,7 +34,10 @@ public class Contact
 
     [Required(ErrorMessage = ("Email is required"))]
     [EmailAddress]
+    [StringLength(255)]
     public string Email { get; set; } = string.Empty;
+
+    public int? AddressBookId { get; set; }
 
     public override string ToString()
     {

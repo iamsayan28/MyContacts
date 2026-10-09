@@ -1,48 +1,26 @@
-//using MyContactsApp.Web.Components;
-
 using Microsoft.EntityFrameworkCore;
-<<<<<<< HEAD
-=======
 using MyContactsApp.Web.Components;
->>>>>>> feature/UC2-validate-contact
-//using MyContactsApp.Infrastructure.Data; // Adjust if your AppDbContext namespace differs
-//using MyContactsApp.Infrastructure.Services; // Adjust to your actual service namespace
-//using MyContactsApp.Core.Interfaces; // Adjust to your actual interface namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Add Services to the Container
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-//);
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+);
 
-//builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<AddressBookService>();
 
 // Web & UI Services
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-<<<<<<< HEAD
-=======
-
-//builder.Services.AddRazorComponents()
-//    .AddInteractiveServerComponents();
-
-
-builder.Services.AddHttpClient();
->>>>>>> feature/UC2-validate-contact
 
 var app = builder.Build();
 
 // 2. Configure the HTTP Request Pipeline (Middleware Order Matters!)
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -61,17 +39,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Contacts}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 app.MapControllers();
 
-// Fallback to Home/Index for single-page routing
-<<<<<<< HEAD
-app.MapFallbackToController("Index", "Home");
-=======
 app.MapFallbackToController("Index", "Contacts");
-
-//app.MapRazorComponents<CreateContact>()
-//    .AddInteractiveServerRenderMode();
->>>>>>> feature/UC2-validate-contact
-
 app.Run();

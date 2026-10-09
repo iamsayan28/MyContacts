@@ -1,42 +1,46 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-public interface IContactService
+public class ContactService
 {
-    public void AddContactService(Contact contact);
-}
-public class ContactService : IContactService
-{
-    public void AddContactService(Contact contact)
+    private readonly AppDbContext _context;
+    public ContactService(AppDbContext context)
     {
-
+        _context = context;
+    }
+    public async Task AddContactServiceAsync(Contact contact)
+    {
+        _context.Contacts.Add(contact);
+        await _context.SaveChangesAsync();
     }
 
-    //public Task EditContactAsync(int id)
-    //{
+    public async Task<List<Contact>> GetAllContactsAsync()
+    {
+        return await _context.Contacts.ToListAsync();
+    }
 
-    //}
+    public async Task<Contact?> FindContactByIdASync(int id)
+    {
+        return await _context.Contacts.FindAsync(id);
+    }
 
-    //public Task DeleteContactAsync(int id)
-    //{
+    public async Task UpdateContactAsync(Contact contact)
+    {
+        _context.Contacts.Update(contact);
+        await _context.SaveChangesAsync();
+    }
 
-    //}
-    //public Task<int> GetTotalContactCountAsync()
-    //{
+    public async Task<bool> DeleteContactAsync(int id)
+    {
+        var contact = await _context.Contacts.FindAsync(id);
 
-    //}
-    //public Task<> SearchByCityAsync(string city)
-    //{
+        if (contact == null) return false;
 
-    //}
-    //public Task ViewByCityOrStateAsync()
-    //{
-
-    //}
-    //public Task GetCountByCityOrStateAsync()
-    //{
-
-    //}
+        _context.Contacts.Remove(contact);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
 }
