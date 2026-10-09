@@ -16,33 +16,48 @@ else if (totalContacts == 0)
 }
 else
 {
-    <h2 class="mt-4">By City</h2>
+    <!-- UC 10: Count Summary Card -->
+    <div class="card bg-light p-3 my-3">
+        <h5 class="card-title">Location Summary</h5>
+        <p class="mb-1">
+            <strong>By City:</strong>
+            @(cityCounts.Any()
+                ? string.Join(", ", cityCounts.Select(kv => $"{kv.Key} = {kv.Value}"))
+                : "None")
+        </p>
+        <p class="mb-0">
+            <strong>By State:</strong>
+            @(stateCounts.Any()
+                ? string.Join(", ", stateCounts.Select(kv => $"{kv.Key} = {kv.Value}"))
+                : "None")
+        </p>
+    </div>
 
+    <!-- Groups by City -->
+    <h2 class="mt-4">By City</h2>
     @foreach (var group in cityGroups)
     {
-        <h3 class="h5 mt-3">@group.Location</h3>
-
+        <h3 class="h5 mt-3">@group.Location (@group.Contacts.Count)</h3>
         <ul class="list-group mb-3">
             @foreach (var contact in group.Contacts)
             {
                 <li class="list-group-item">
-                    @contact.FirstName @contact.LastName
+                    @contact.FirstName @contact.LastName (@contact.City, @contact.State)
                 </li>
             }
         </ul>
     }
 
+    <!-- Groups by State -->
     <h2 class="mt-4">By State</h2>
-
     @foreach (var group in stateGroups)
     {
-        <h3 class="h5 mt-3">@group.Location</h3>
-
+        <h3 class="h5 mt-3">@group.Location (@group.Contacts.Count)</h3>
         <ul class="list-group mb-3">
             @foreach (var contact in group.Contacts)
             {
                 <li class="list-group-item">
-                    @contact.FirstName @contact.LastName
+                    @contact.FirstName @contact.LastName (@contact.City, @contact.State)
                 </li>
             }
         </ul>
@@ -53,14 +68,20 @@ else
     private bool isLoading = true;
     private int totalContacts;
 
+    private Dictionary<string, int> cityCounts = new();
+    private Dictionary<string, int> stateCounts = new();
+
     private List<LocationGroup> cityGroups = new();
     private List<LocationGroup> stateGroups = new();
 
     protected override async Task OnInitializedAsync()
     {
         var contacts = await ContactService.GetAllContactsAsync();
-
         totalContacts = contacts.Count;
+
+        // UC 10 Count calculations
+        cityCounts = await ContactService.GetCountByCityAsync();
+        stateCounts = await ContactService.GetCountByStateAsync();
 
         cityGroups = GroupContacts(contacts, c => c.City);
         stateGroups = GroupContacts(contacts, c => c.State);

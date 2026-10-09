@@ -1,38 +1,124 @@
-﻿@inject ContactService contactService
+﻿@page "/contacts/edit/{ContactId:int}"
+@inject ContactService contactService
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore
 
-@if(contactModel != null)
+<h3>Edit Contact</h3>
+
+@if (contactModel == null)
 {
-	<EditForm Model="@contactModel" OnSubmit="@HandleUpdate">
-		<DataAnnotationsValidator />
+    <p><em>Loading contact details...</em></p>
+}
+else
+{
+    <!-- Enforces DataAnnotations constraints (Regex, Required, Email) via OnValidSubmit -->
+    <EditForm Model="@contactModel" OnValidSubmit="@HandleValidUpdate">
+        <DataAnnotationsValidator />
 
-		<InputText class="form-control mb-2" @bind-Value="contactModel.FirstName" />
-		<InputText class="form-control mb-2" @bind-Value="contactModel.LastName" />
-		<InputText class="form-control mb-2" @bind-Value="contactModel.City" />
-		<InputText class="form-control mb-2" @bind-Value="contactModel.PhoneNumber" />
-		<InputText class="form-control mb-2" @bind-Value="contactModel.Email" />
-		<button type="submit" class="btn btn-success">Save Changes</button>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mb-3" role="alert">
+                @errorMessage
+            </div>
+        }
 
-	</EditForm>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">First Name</label>
+                <InputText class="form-control" @bind-Value="contactModel.FirstName" />
+                <ValidationMessage For="@(() => contactModel.FirstName)" class="text-danger small" />
+            </div>
 
+            <div class="col-md-6">
+                <label class="form-label">Last Name</label>
+                <InputText class="form-control" @bind-Value="contactModel.LastName" />
+                <ValidationMessage For="@(() => contactModel.LastName)" class="text-danger small" />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Address</label>
+                <InputText class="form-control" @bind-Value="contactModel.Address" />
+                <ValidationMessage For="@(() => contactModel.Address)" class="text-danger small" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">City</label>
+                <InputText class="form-control" @bind-Value="contactModel.City" />
+                <ValidationMessage For="@(() => contactModel.City)" class="text-danger small" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">State</label>
+                <InputText class="form-control" @bind-Value="contactModel.State" />
+                <ValidationMessage For="@(() => contactModel.State)" class="text-danger small" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Zip Code</label>
+                <InputText class="form-control" @bind-Value="contactModel.Zip" />
+                <ValidationMessage For="@(() => contactModel.Zip)" class="text-danger small" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <InputText class="form-control" @bind-Value="contactModel.PhoneNumber" />
+                <ValidationMessage For="@(() => contactModel.PhoneNumber)" class="text-danger small" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <InputText class="form-control" @bind-Value="contactModel.Email" />
+                <ValidationMessage For="@(() => contactModel.Email)" class="text-danger small" />
+            </div>
+
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a href="/uc1" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+        </div>
+    </EditForm>
 }
 
 @code {
-	[Parameter] public int ContactId { get; set; }
-	private Contact? contactModel;
+    [Parameter] public int ContactId { get; set; }
+    private Contact? contactModel;
+    private string? errorMessage;
 
-	protected override async Task OnInitializedAsync()
-	{
-		contactModel = await contactService.FindContactByIdASync(ContactId);
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        contactModel = await contactService.FindContactByIdASync(ContactId);
+        if (contactModel == null)
+        {
+            errorMessage = "Contact not found.";
+        }
+    }
 
-	private async Task HandleUpdate()
-	{
-		if (contactModel != null)
-		{
-			await contactService.UpdateContactAsync(contactModel);
-			NavigationManager.NavigateTo("/Contacts", forceLoad: true);
-		}
-	}
+    private async Task HandleValidUpdate()
+    {
+        errorMessage = null;
+
+        if (contactModel == null) return;
+
+        try
+        {
+            bool updated = await contactService.UpdateContactAsync(contactModel);
+
+            if (!updated)
+            {
+                errorMessage = $"Another contact with the name '{contactModel.FirstName} {contactModel.LastName}' already exists.";
+                return;
+            }
+
+            NavigationManager.NavigateTo("/uc1");
+        }
+        catch (DbUpdateException)
+        {
+            errorMessage = "A contact with this email already exists.";
+        }
+        catch (Exception)
+        {
+            errorMessage = "An error occurred while updating the contact.";
+        }
+    }
 }
