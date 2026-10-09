@@ -2,46 +2,119 @@
 @inject AddressBookService addressBookService
 @page "/uc1"
 
-<h3>List of Contacts:</h3>
+<h3>List of Contacts</h3>
 
 <span class="badge bg-secondary fs-6">Total: @totalCount</span>
 
-<div class="card">
-	<ul class="list-group list-group-flush">
-		@foreach (var contact in list)
-		{
-			<li class="list-group-item d-flex justify-content-between align-items-center">
-				<div>
-					<small class="mb-0">@contact.ToString()</small>
-					@* <small class="text-muted">@contact.Email</small> *@
-				</div>
-				
-				<div class="card-footer bg-transparent border-top-0">
-                    <a href="/contacts/edit/@contact.Id" class="btn btn-primary btn-sm">Edit</a>
+<div class="row g-2 my-3">
+    <div class="col-md-3">
+        <select class="form-select" @bind="searchType">
+            <option value="City">City</option>
+            <option value="State">State</option>
+        </select>
+    </div>
 
-					<form action="/Contacts/Delete/@contact.Id" method="post" style="display:inline;">
-						<button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-					</form>
-                </div>
-			</li>
-		}
-	</ul>
+    <div class="col-md-6">
+        <input class="form-control"
+               placeholder="Enter city or state..."
+               @bind="searchTerm"
+               @bind:event="oninput" />
+    </div>
+
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary"
+                @onclick="SearchContacts">
+            Search
+        </button>
+
+        @* <button type="button" class="btn btn-primary" @onclick="TestClick">
+            Test Click
+        </button>
+        <p>@testMessage</p> *@
+        <button type="button" class="btn btn-secondary"
+                @onclick="ClearSearch">
+            Clear
+        </button>
+    </div>
 </div>
 
+@if (searched)
+{
+    <p>Found @filteredList.Count contact(s):</p>
+}
+
+<div class="card">
+    <ul class="list-group list-group-flush">
+        @foreach (var contact in filteredList)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <small>@contact.ToString()</small>
+
+                <div>
+                    <a href="/contacts/edit/@contact.Id"
+                       class="btn btn-primary btn-sm">Edit</a>
+
+                    <form action="/Contacts/Delete/@contact.Id"
+                          method="post" style="display:inline;">
+                        <button type="submit"
+                                class="btn btn-sm btn-outline-danger">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+@if (searched && filteredList.Count == 0)
+{
+    <p class="text-muted mt-3">No matching contacts found.</p>
+}
+
 @code {
-	// present within this component
-	private List<Contact> list = new List<Contact>(); // empty list initially
-	private int totalCount;
+    private List<Contact> allContacts = new();
+    private List<Contact> filteredList = new();
+    private int totalCount;
 
-	protected override async Task OnInitializedAsync()
-	{
-		list = await contactService.GetAllContactsAsync();
-		totalCount = await addressBookService.GetTotalContactCountAsync();
-	}
+    private string searchType = "City";
+    private string searchTerm = string.Empty;
+    private bool searched;
 
-	private async Task DeleteContact(int id)
+    protected override async Task OnInitializedAsync()
     {
-        await contactService.DeleteContactAsync(id);
-        list = await contactService.GetAllContactsAsync(); // Refresh list instantly
+        allContacts = await contactService.GetAllContactsAsync();
+        filteredList = allContacts;
+        totalCount = await addressBookService.GetTotalContactCountAsync();
+    }
+
+    private async Task SearchContacts()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredList = allContacts;
+            searched = false;
+            return;
+        }
+
+        filteredList = searchType == "City"
+            ? await contactService.SearchByCityAsync(searchTerm)
+            : await contactService.SearchByStateAsync(searchTerm);
+
+        searched = true;
+    }
+
+    private void ClearSearch()
+    {
+        searchTerm = string.Empty;
+        filteredList = allContacts;
+        searched = false;
+    }
+
+    private string testMessage = "Not clicked";
+
+    private void TestClick()
+    {
+        testMessage = "Button event works";
     }
 }

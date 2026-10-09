@@ -55,5 +55,18 @@ public class ContactService
         return true;
     }
 
+    public async Task<List<Contact>> SearchByCityAsync(string city)
+    {
+        city = city.Trim();
+
+        return await _context.Contacts.Where(c => c.City.Contains(city)).ToListAsync();
+    }
+
+    public async Task<List<Contact>> SearchByStateAsync(string state)
+    {
+        state = state.Trim();
+
+        return await _context.Contacts.Where(c => c.State.Contains(state)).ToListAsync();
+    }
 
 }
