@@ -10,10 +10,22 @@ public class ContactService
     {
         _context = context;
     }
-    public async Task AddContactServiceAsync(Contact contact)
+    public async Task<bool> AddContactServiceAsync(Contact contact)
     {
+        contact.FirstName = contact.FirstName.Trim();
+        contact.LastName = contact.LastName.Trim();
+
+        bool exists = await _context.Contacts.AnyAsync(c => c.FirstName == contact.FirstName && c.LastName == contact.LastName);
+
+        if (exists)
+        {
+            return false;
+        }
+
         _context.Contacts.Add(contact);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<List<Contact>> GetAllContactsAsync()
@@ -42,5 +54,6 @@ public class ContactService
         await _context.SaveChangesAsync();
         return true;
     }
+
 
 }

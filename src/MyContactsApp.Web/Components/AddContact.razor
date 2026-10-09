@@ -1,4 +1,4 @@
-﻿@inject NavigationManager NavigationManager
+@inject NavigationManager NavigationManager
 @inject ContactService contactService
 @using Microsoft.AspNetCore.Components.Forms
 
@@ -77,11 +77,18 @@
 
     private async Task HandleValidSubmit()
     {
-        errorMessage = null; // Clear previous error
+        errorMessage = null;
 
         try
         {
-            await contactService.AddContactServiceAsync(contactModel);
+            bool added = await contactService.AddContactServiceAsync(contactModel);
+
+            if(!added)
+            {
+                errorMessage = $"Contact '{contactModel.FirstName} " + $"{contactModel.LastName}' already exists. " + "Duplicate not added.";
+                return;
+            }
+
             NavigationManager.NavigateTo("/Contacts", forceLoad: true);
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException)
