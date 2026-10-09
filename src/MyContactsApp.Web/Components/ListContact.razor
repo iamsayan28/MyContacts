@@ -1,16 +1,28 @@
 ﻿@inject ContactService contactService
+@inject AddressBookService addressBookService
 @page "/uc1"
 
 <h3>List of Contacts:</h3>
+
+<span class="badge bg-secondary fs-6">Total: @totalCount</span>
+
 <div class="card">
 	<ul class="list-group list-group-flush">
 		@foreach (var contact in list)
 		{
 			<li class="list-group-item d-flex justify-content-between align-items-center">
 				<div>
-					<h6 class="mb-0">@contact.FirstName @contact.LastName</h6>
-					<small class="text-muted">@contact.Email</small>
+					<small class="mb-0">@contact.ToString()</small>
+					@* <small class="text-muted">@contact.Email</small> *@
 				</div>
+				
+				<div class="card-footer bg-transparent border-top-0">
+                    <a href="/contacts/edit/@contact.Id" class="btn btn-primary btn-sm">Edit</a>
+
+					<form action="/Contacts/Delete/@contact.Id" method="post" style="display:inline;">
+						<button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+					</form>
+                </div>
 			</li>
 		}
 	</ul>
@@ -19,9 +31,17 @@
 @code {
 	// present within this component
 	private List<Contact> list = new List<Contact>(); // empty list initially
+	private int totalCount;
 
 	protected override async Task OnInitializedAsync()
 	{
 		list = await contactService.GetAllContactsAsync();
+		totalCount = await addressBookService.GetTotalContactCountAsync();
 	}
+
+	private async Task DeleteContact(int id)
+    {
+        await contactService.DeleteContactAsync(id);
+        list = await contactService.GetAllContactsAsync(); // Refresh list instantly
+    }
 }

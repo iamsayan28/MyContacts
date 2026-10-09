@@ -1,0 +1,38 @@
+﻿@inject ContactService contactService
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Forms
+
+@if(contactModel != null)
+{
+	<EditForm Model="@contactModel" OnSubmit="@HandleUpdate">
+		<DataAnnotationsValidator />
+
+		<InputText class="form-control mb-2" @bind-Value="contactModel.FirstName" />
+		<InputText class="form-control mb-2" @bind-Value="contactModel.LastName" />
+		<InputText class="form-control mb-2" @bind-Value="contactModel.City" />
+		<InputText class="form-control mb-2" @bind-Value="contactModel.PhoneNumber" />
+		<InputText class="form-control mb-2" @bind-Value="contactModel.Email" />
+		<button type="submit" class="btn btn-success">Save Changes</button>
+
+	</EditForm>
+
+}
+
+@code {
+	[Parameter] public int ContactId { get; set; }
+	private Contact? contactModel;
+
+	protected override async Task OnInitializedAsync()
+	{
+		contactModel = await contactService.FindContactByIdASync(ContactId);
+	}
+
+	private async Task HandleUpdate()
+	{
+		if (contactModel != null)
+		{
+			await contactService.UpdateContactAsync(contactModel);
+			NavigationManager.NavigateTo("/Contacts", forceLoad: true);
+		}
+	}
+}

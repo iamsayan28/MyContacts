@@ -11,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<AddressBookService>();
 
 // Web & UI Services
 builder.Services.AddControllersWithViews();

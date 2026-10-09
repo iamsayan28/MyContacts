@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MyContactsApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261008171049_AddAddressBook")]
+    partial class AddAddressBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,23 +22,6 @@ namespace MyContactsApp.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("AddressBook", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AddressBooks");
-                });
 
             modelBuilder.Entity("Contact", b =>
                 {
@@ -48,9 +34,6 @@ namespace MyContactsApp.Infrastructure.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int?>("AddressBookId")
-                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -83,24 +66,10 @@ namespace MyContactsApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressBookId");
-
                     b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("Contacts");
-                });
-
-            modelBuilder.Entity("Contact", b =>
-                {
-                    b.HasOne("AddressBook", null)
-                        .WithMany("Contacts")
-                        .HasForeignKey("AddressBookId");
-                });
-
-            modelBuilder.Entity("AddressBook", b =>
-                {
-                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,9 +16,20 @@ public class ContactsController : Controller
         return View(ContactList);
     }
 
-    [HttpGet]
     public IActionResult Add()
     {
         return View();
+    }
+
+    public IActionResult Edit(int id)
+    {
+        return View(id);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _service.DeleteContactAsync(id);
+        return RedirectToAction("Index");
     }
 }

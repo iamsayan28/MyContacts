@@ -37,6 +37,8 @@ public class Contact
     [StringLength(255)]
     public string Email { get; set; } = string.Empty;
 
+    public int? AddressBookId { get; set; }
+
     public override string ToString()
     {
         return $"{FirstName} {LastName} | {Address}, " +

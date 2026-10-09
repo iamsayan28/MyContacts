@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
 
     // Set<Contact> means getting EF core DbSet for Contact entity(which is a collection of Contact records that EF can query and save to the DB)
     public DbSet<Contact> Contacts => Set<Contact>();
+    public DbSet<AddressBook> AddressBooks => Set<AddressBook>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
